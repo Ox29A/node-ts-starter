@@ -1,6 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { connectToDatabase } from './databaseConnection';
+import { roleRoute } from './routes/role.route';
+import { userRoute } from './routes/user.route';
 
 dotenv.config();
 
@@ -12,12 +14,13 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  return res.json({ message: 'Hello World!' });
-});
+app.use('/', userRoute());
+app.use('/', roleRoute());
 
 app.listen(PORT, async () => {
-  await connectToDatabase();
+  await connectToDatabase().then(() => {
+    console.log('Connected to database');
+  });
 
   console.log(`Application started on URL ${HOST}:${PORT} 🎉`);
 });
